@@ -33,10 +33,10 @@ function ResetPasswordForm() {
 
   if (isError) {
     return (
-      <Card className="w-full max-w-md text-center">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-destructive">Tautan Kedaluwarsa</CardTitle>
-          <CardDescription>
+      <Card className="w-full max-w-md text-center mt-4 md:mt-0">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-2xl md:text-3xl font-bold text-destructive">Tautan Kedaluwarsa</CardTitle>
+          <CardDescription className="text-sm md:text-base">
             Tautan reset kata sandi tidak valid atau telah kedaluwarsa. Silakan minta tautan baru.
           </CardDescription>
         </CardHeader>
@@ -52,10 +52,10 @@ function ResetPasswordForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Reset Kata Sandi</CardTitle>
-        <CardDescription>
+    <Card className="w-full max-w-md mt-4 md:mt-0">
+      <CardHeader className="space-y-2 text-center">
+        <CardTitle className="text-2xl md:text-3xl font-bold">Reset Kata Sandi</CardTitle>
+        <CardDescription className="text-sm md:text-base">
           Masukkan kata sandi baru Anda di bawah ini.
         </CardDescription>
       </CardHeader>
@@ -82,7 +82,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-16rem)] py-12">
+    <div className="container mx-auto px-4 flex justify-center items-start md:items-center min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-16rem)] pt-8 pb-12 md:py-12">
       <Suspense fallback={<div>Memuat...</div>}>
         <ResetPasswordForm />
       </Suspense>

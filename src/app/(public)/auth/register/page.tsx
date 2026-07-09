@@ -14,11 +14,11 @@ export default function RegisterPage() {
   const [ownerState, ownerAction, isOwnerPending] = useActionState(registerAction.bind(null, 'owner'), null)
 
   return (
-    <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-16rem)] py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Buat Akun</CardTitle>
-          <CardDescription>
+    <div className="container mx-auto px-4 flex justify-center items-start md:items-center min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-16rem)] pt-8 pb-12 md:py-12">
+      <Card className="w-full max-w-md mt-4 md:mt-0">
+        <CardHeader className="space-y-2 text-center">
+          <CardTitle className="text-2xl md:text-3xl font-bold">Buat Akun</CardTitle>
+          <CardDescription className="text-sm md:text-base">
             Bergabunglah dengan SportBook untuk memesan venue atau mendaftarkan venue Anda
           </CardDescription>
         </CardHeader>

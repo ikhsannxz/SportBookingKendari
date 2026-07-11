@@ -1,10 +1,10 @@
-import { Store, CalendarDays, Activity, Banknote, CreditCard, Clock, CheckCircle2, TrendingUp, CheckSquare } from 'lucide-react'
+import { Store, CalendarDays, Activity, Banknote, CreditCard, Clock, CheckCircle2, TrendingUp, CheckSquare, Star } from 'lucide-react'
 import { StatsCard } from '@/components/owner/stats-card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { getOwnerDashboardStats } from '@/lib/supabase/queries/venues'
 import { getOwnerBookingStats } from '@/lib/supabase/queries/bookings'
-import { getOwnerAnalytics } from '@/lib/supabase/queries/analytics'
+import { getOwnerAnalytics, getOwnerVenueAnalytics } from '@/lib/supabase/queries/analytics'
 import { expireUnpaidBookings } from '@/app/actions/bookings'
 
 function formatCurrency(amount: number) {
@@ -18,10 +18,11 @@ function formatCurrency(amount: number) {
 
 export default async function OwnerDashboardPage() {
   await expireUnpaidBookings()
-  const [stats, bookingStats, analytics] = await Promise.all([
+  const [stats, bookingStats, analytics, venueAnalytics] = await Promise.all([
     getOwnerDashboardStats(),
     getOwnerBookingStats(),
-    getOwnerAnalytics()
+    getOwnerAnalytics(),
+    getOwnerVenueAnalytics()
   ])
 
   return (
@@ -144,6 +145,13 @@ export default async function OwnerDashboardPage() {
           icon={CheckSquare}
           iconBg="bg-blue-100"
           iconColor="text-blue-600"
+        />
+        <StatsCard
+          label="Rating Rata-rata"
+          value={venueAnalytics.avgRating.toString()}
+          icon={Star}
+          iconBg="bg-yellow-100"
+          iconColor="text-yellow-600"
         />
       </div>
 

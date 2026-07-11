@@ -125,7 +125,7 @@ export function VenueForm({
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Nama Venue</Label>
-                <Input name="name" id="name" defaultValue={initialData?.name || ''} placeholder="cth. Champion Futsal Arena" required />
+                <Input name="name" id="name" defaultValue={initialData?.name ?? ""} placeholder="cth. Champion Futsal Arena" required />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -144,7 +144,7 @@ export function VenueForm({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="price_per_hour">Harga per Jam (Rp)</Label>
-                  <Input name="price_per_hour" id="price_per_hour" defaultValue={initialData?.price_per_hour || ''} type="number" placeholder="150000" required />
+                  <Input name="price_per_hour" id="price_per_hour" defaultValue={initialData?.price_per_hour ?? ""} type="number" placeholder="150000" required />
                 </div>
               </div>
               <div className="space-y-2">
@@ -152,7 +152,7 @@ export function VenueForm({
                 <Textarea 
                   name="description"
                   id="description" 
-                  defaultValue={initialData?.description || ''}
+                  defaultValue={initialData?.description ?? ""}
                   placeholder="Deskripsikan venue Anda, kualitasnya, dan apa yang membuatnya spesial..."
                   className="min-h-[120px]"
                 />
@@ -169,27 +169,35 @@ export function VenueForm({
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="address">Alamat</Label>
-                <Input name="address" id="address" defaultValue={initialData?.address || ''} placeholder="Alamat jalan" required />
+                <Input name="address" id="address" defaultValue={initialData?.address ?? ""} placeholder="Alamat jalan" required />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">Kota</Label>
-                  <Input name="city" id="city" defaultValue={initialData?.city || ''} placeholder="cth. Kendari" required />
+                  <Input name="city" id="city" defaultValue={initialData?.city ?? ""} placeholder="cth. Kendari" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="district">Kecamatan</Label>
-                  <Input name="district" id="district" defaultValue={initialData?.district || ''} placeholder="cth. Kadia" />
+                  <Input name="district" id="district" defaultValue={initialData?.district ?? ""} placeholder="cth. Kadia" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="latitude">Latitude</Label>
-                  <Input name="latitude" id="latitude" defaultValue={initialData?.latitude || ''} placeholder="-3.996" type="number" step="any" />
+                  <Input name="latitude" id="latitude" defaultValue={initialData?.latitude ?? ""} placeholder="-3.996" type="number" step="any" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="longitude">Longitude</Label>
-                  <Input name="longitude" id="longitude" defaultValue={initialData?.longitude || ''} placeholder="122.512" type="number" step="any" />
+                  <Input name="longitude" id="longitude" defaultValue={initialData?.longitude ?? ""} placeholder="122.512" type="number" step="any" />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="google_maps_url">Google Maps URL</Label>
+                <Input name="google_maps_url" id="google_maps_url" defaultValue={initialData?.google_maps_url ?? ""} placeholder="https://maps.app.goo.gl/..." type="url" />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Tempelkan link Google Maps venue Anda. <br/>
+                  <span className="font-medium">Google Maps &rarr; Bagikan &rarr; Salin Link</span>
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -307,7 +315,7 @@ export function VenueForm({
                     <Textarea 
                       name="maintenance_reason" 
                       id="maintenance_reason" 
-                      value={maintenanceReason}
+                      value={maintenanceReason ?? ""}
                       onChange={(e) => setMaintenanceReason(e.target.value)}
                       placeholder="cth. Perbaikan lampu lapangan" 
                     />
@@ -318,7 +326,7 @@ export function VenueForm({
                       type="date" 
                       name="maintenance_until" 
                       id="maintenance_until" 
-                      value={maintenanceUntil}
+                      value={maintenanceUntil ?? ""}
                       onChange={(e) => setMaintenanceUntil(e.target.value)}
                     />
                   </div>

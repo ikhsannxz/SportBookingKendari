@@ -29,7 +29,7 @@ export default function LoginPage() {
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Alamat Email</Label>
-              <Input id="email" name="email" type="email" placeholder="email@contoh.com" required />
+              <Input id="email" name="email" type="email" placeholder="Masukkan alamat email" required />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -38,7 +38,7 @@ export default function LoginPage() {
                   Lupa Kata Sandi?
                 </Link>
               </div>
-              <Input id="password" name="password" type="password" required />
+              <Input id="password" name="password" type="password" placeholder="Masukkan kata sandi" required />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">

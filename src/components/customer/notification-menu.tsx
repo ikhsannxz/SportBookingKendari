@@ -20,19 +20,45 @@ export function NotificationMenu() {
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      try {
+        const {
+          data: { session },
+          error: sessionError
+        } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error('Notification auth error:', sessionError)
+          return
+        }
+        
+        if (!session) return
 
-      const { data } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20)
+        const { data: { user }, error: userError } = await supabase.auth.getUser()
+        if (userError) {
+          console.error('Notification auth error:', userError)
+          return
+        }
+        
+        if (!user) return
 
-      if (data) {
-        setNotifications(data)
-        setUnreadCount(data.filter(n => !n.is_read).length)
+        const { data, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20)
+
+        if (error) {
+          console.error('Notification query error:', error)
+          return
+        }
+
+        if (data) {
+          setNotifications(data)
+          setUnreadCount(data.filter(n => !n.is_read).length)
+        }
+      } catch (err) {
+        console.error('Notification fetch failed:', err)
       }
     }
 

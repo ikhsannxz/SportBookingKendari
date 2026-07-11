@@ -27,6 +27,7 @@ export interface Venue {
   district: string | null
   latitude: number | null
   longitude: number | null
+  google_maps_url?: string | null
   price_per_hour: number
   status: VenueStatus
   maintenance_reason: string | null
@@ -63,4 +64,17 @@ export interface Schedule {
   close_time: string
   is_closed: boolean
   created_at: string
+}
+
+export interface Review {
+  id: string
+  booking_id: string
+  venue_id: string
+  customer_id: string
+  rating: number
+  comment: string | null
+  owner_reply: string | null
+  replied_at: string | null
+  created_at: string
+  updated_at: string
 }

@@ -14,6 +14,8 @@ import { SortSelect } from './sort-select'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { Search } from 'lucide-react'
+import { getFavoritesAction } from '@/app/actions/favorites'
+import { FavoriteButton } from '@/components/customer/favorite-button'
 
 export default async function SearchPage({
   searchParams,
@@ -32,6 +34,8 @@ export default async function SearchPage({
   const sortBy = typeof params.sortBy === 'string' ? params.sortBy : undefined
 
   const venues = await searchVenues({ sport, city, minPrice, maxPrice, q, sortBy })
+  const favorites = await getFavoritesAction()
+  const favoriteSet = new Set(favorites)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -101,6 +105,11 @@ export default async function SearchPage({
                       ) : (
                         <ImageIcon className="w-8 h-8 text-muted-foreground/30" />
                       )}
+                      <FavoriteButton 
+                        venueId={venue.id}
+                        initialIsFavorite={favoriteSet.has(venue.id)}
+                        className="absolute top-2 right-2 w-8 h-8 bg-black/20 hover:bg-black/40 border border-white/20 text-white backdrop-blur-md"
+                      />
                     </div>
                     <CardContent className="p-4 flex-1 flex flex-col">
                       <div className="flex justify-between items-start mb-2 gap-2">

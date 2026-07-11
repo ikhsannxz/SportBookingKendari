@@ -9,7 +9,8 @@ import {
   BarChart3,
   User,
   Settings,
-  Store
+  Store,
+  Star
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -18,6 +19,7 @@ const ownerNavItems = [
   { href: '/owner/venues', label: 'Venue Saya', icon: Store },
   { href: '/owner/bookings', label: 'Booking', icon: CalendarDays },
   { href: '/owner/schedules', label: 'Jadwal', icon: Clock },
+  { href: '/owner/reviews', label: 'Ulasan', icon: Star },
   { href: '/owner/analytics', label: 'Analitik', icon: BarChart3 },
 ]
 

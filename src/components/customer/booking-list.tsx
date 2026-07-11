@@ -2,7 +2,7 @@
 'use client'
 
 import { useTransition, useState } from 'react'
-import { Calendar, Clock, MapPin, Upload, Loader2, Image as ImageIcon } from 'lucide-react'
+import { Calendar, Clock, MapPin, Upload, Loader2, Image as ImageIcon, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -21,7 +21,7 @@ import { cancelBookingAction } from '@/app/actions/bookings'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getVenueImage } from '@/lib/utils'
+import { getVenueImage, getGoogleMapsUrl } from '@/lib/utils'
 import { EmptyState } from '@/components/ui/empty-state'
 
 interface BookingListProps {
@@ -79,9 +79,23 @@ export function CustomerBookingList({ bookings }: BookingListProps) {
                 )}
               </div>
             </div>
-            <p className="text-muted-foreground text-sm flex items-center">
-              <MapPin className="w-4 h-4 mr-1" /> {booking.venues.district}, {booking.venues.city}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground text-sm flex items-center">
+                <MapPin className="w-4 h-4 mr-1" /> {booking.venues.district}, {booking.venues.city}
+              </p>
+              {(() => {
+                const mapsUrl = getGoogleMapsUrl(booking.venues)
+                if (mapsUrl) {
+                  return (
+                    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs text-primary hover:underline font-medium">
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      Lokasi
+                    </a>
+                  )
+                }
+                return null
+              })()}
+            </div>
             <div className="flex items-center gap-4 text-sm font-medium mt-2">
               <span className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded">
                 <Calendar className="w-4 h-4 mr-2" />

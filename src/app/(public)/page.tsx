@@ -11,9 +11,13 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { getFeaturedVenues } from '@/lib/supabase/queries/venues'
 import Image from 'next/image'
 import { getVenueImage } from '@/lib/utils'
+import { getFavoritesAction } from '@/app/actions/favorites'
+import { FavoriteButton } from '@/components/customer/favorite-button'
 
 export default async function LandingPage() {
   const featuredVenues = await getFeaturedVenues(6)
+  const favorites = await getFavoritesAction()
+  const favoriteSet = new Set(favorites)
 
   const sports = [
     { name: 'Futsal', image: '/images/home/futsal.png', slug: 'futsal' },
@@ -208,9 +212,11 @@ export default async function LandingPage() {
                     )}
                     
                     {/* Floating Heart / Like */}
-                    <div className="absolute top-4 right-4 text-white hover:scale-110 transition-transform drop-shadow-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(0,0,0,0.4)" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    </div>
+                    <FavoriteButton 
+                      venueId={venue.id}
+                      initialIsFavorite={favoriteSet.has(venue.id)}
+                      className="absolute top-3 right-3 w-8 h-8 bg-black/20 hover:bg-black/40 border border-white/20 text-white backdrop-blur-md"
+                    />
                   </div>
                   
                   {/* Content Container */}

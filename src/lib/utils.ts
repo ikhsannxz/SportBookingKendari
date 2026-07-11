@@ -44,3 +44,18 @@ export function translateFacility(facilityName: string): string {
   }
   return mapping[facilityName] || facilityName
 }
+
+export function getGoogleMapsUrl(venue: { google_maps_url?: string | null, latitude?: number | null, longitude?: number | null, address?: string | null, city?: string | null }): string | null {
+  if (venue.google_maps_url) {
+    return venue.google_maps_url
+  }
+  if (venue.latitude != null && venue.longitude != null) {
+    return `https://www.google.com/maps/search/?api=1&query=${venue.latitude},${venue.longitude}`
+  }
+  if (venue.address) {
+    const query = encodeURIComponent(`${venue.address}${venue.city ? `, ${venue.city}` : ''}`)
+    return `https://www.google.com/maps/search/?api=1&query=${query}`
+  }
+  return null
+}
+

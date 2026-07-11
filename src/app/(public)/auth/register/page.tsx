@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +13,19 @@ import { registerAction } from '@/app/actions/auth'
 export default function RegisterPage() {
   const [customerState, customerAction, isCustomerPending] = useActionState(registerAction.bind(null, 'customer'), null)
   const [ownerState, ownerAction, isOwnerPending] = useActionState(registerAction.bind(null, 'owner'), null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (customerState?.redirectUrl) {
+      router.push(customerState.redirectUrl)
+    }
+  }, [customerState, router])
+
+  useEffect(() => {
+    if (ownerState?.redirectUrl) {
+      router.push(ownerState.redirectUrl)
+    }
+  }, [ownerState, router])
 
   return (
     <div className="container mx-auto px-4 flex justify-center items-start md:items-center min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-16rem)] pt-8 pb-12 md:py-12">
@@ -43,15 +57,15 @@ export default function RegisterPage() {
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="name-customer">Nama Lengkap</Label>
-                  <Input id="name-customer" name="fullName" placeholder="Budi Santoso" required />
+                  <Input id="name-customer" name="fullName" placeholder="Masukkan nama lengkap" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email-customer">Alamat Email</Label>
-                  <Input id="email-customer" name="email" type="email" placeholder="email@contoh.com" required />
+                  <Input id="email-customer" name="email" type="email" placeholder="Masukkan alamat email" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password-customer">Kata Sandi</Label>
-                  <Input id="password-customer" name="password" type="password" required minLength={6} />
+                  <Input id="password-customer" name="password" type="password" placeholder="Masukkan kata sandi" required minLength={6} />
                 </div>
                 <Button className="w-full" type="submit" disabled={isCustomerPending}>
                   {isCustomerPending ? 'Mendaftarkan Akun...' : 'Buat Akun'}
@@ -73,15 +87,15 @@ export default function RegisterPage() {
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="name-owner">Nama Lengkap / Nama Bisnis</Label>
-                  <Input id="name-owner" name="fullName" placeholder="Siti Aminah" required />
+                  <Input id="name-owner" name="fullName" placeholder="Masukkan nama lengkap" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email-owner">Email Bisnis</Label>
-                  <Input id="email-owner" name="email" type="email" placeholder="bisnis@contoh.com" required />
+                  <Input id="email-owner" name="email" type="email" placeholder="Masukkan alamat email" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password-owner">Kata Sandi</Label>
-                  <Input id="password-owner" name="password" type="password" required minLength={6} />
+                  <Input id="password-owner" name="password" type="password" placeholder="Masukkan kata sandi" required minLength={6} />
                 </div>
                 <Button className="w-full" type="submit" disabled={isOwnerPending}>
                   {isOwnerPending ? 'Mendaftarkan Akun Pemilik...' : 'Buat Akun Pemilik'}

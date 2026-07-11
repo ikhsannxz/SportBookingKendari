@@ -2,12 +2,17 @@ import { notFound } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
 import { id } from 'date-fns/locale'
 import Image from 'next/image'
-import { MapPin, Star, Check } from 'lucide-react'
+import { MapPin, Star, Check, ExternalLink } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { getVenueBySlug } from '@/lib/supabase/queries/venues'
 import { BookingWidget } from '@/components/public/booking-widget'
-import { getVenueImage, translateFacility } from '@/lib/utils'
+import { getVenueImage, translateFacility, getGoogleMapsUrl } from '@/lib/utils'
+import { getFavoritesAction } from '@/app/actions/favorites'
+import { FavoriteButton } from '@/components/customer/favorite-button'
+import { ReviewList } from '@/components/public/review-list'
+import { getVenueReviews } from '@/app/actions/reviews'
 
 export default async function VenueDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -19,6 +24,9 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ sl
 
   const primaryImage = getVenueImage(venue.venue_images)
   const otherImages = venue.venue_images?.filter(img => img.url !== primaryImage).slice(0, 4) || []
+  const favorites = await getFavoritesAction()
+  const isFavorite = favorites.includes(venue.id)
+  const reviews = await getVenueReviews(venue.id)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -42,7 +50,10 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ sl
       )}
       {/* Title & Meta */}
       <div className="mb-6">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">{venue.name}</h1>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{venue.name}</h1>
+          <FavoriteButton venueId={venue.id} initialIsFavorite={isFavorite} variant="text" />
+        </div>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1 text-primary font-medium">
             <Star className="w-4 h-4 fill-current" />
@@ -151,7 +162,41 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ sl
 
           <Separator />
 
-          {/* Map / Location section removed as it's not yet integrated */}
+          <section>
+            <h2 className="text-2xl font-bold mb-4">Lokasi Venue</h2>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium text-lg">{venue.address}</p>
+                  <p className="text-muted-foreground">{venue.district}, {venue.city}</p>
+                </div>
+              </div>
+              
+              {(() => {
+                const mapsUrl = getGoogleMapsUrl(venue)
+                if (mapsUrl) {
+                  return (
+                    <Button variant="outline" className="w-fit gap-2 mt-2" asChild>
+                      <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
+                        <MapPin className="w-4 h-4" />
+                        Buka di Google Maps
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </Button>
+                  )
+                }
+                return null
+              })()}
+            </div>
+          </section>
+
+          <Separator />
+
+          <section>
+            <h2 className="text-2xl font-bold mb-4">Ulasan Pelanggan</h2>
+            <ReviewList reviews={reviews} />
+          </section>
         </div>
 
         {/* Sticky Booking Widget */}

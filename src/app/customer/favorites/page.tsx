@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { getVenueImage } from '@/lib/utils'
 import { EmptyState } from '@/components/ui/empty-state'
+import { FavoriteButton } from '@/components/customer/favorite-button'
 
 export default async function CustomerFavoritesPage() {
   const supabase = await createClient()
@@ -19,7 +20,7 @@ export default async function CustomerFavoritesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Favorit</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Favorit Saya ({favorites.length})</h1>
       
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {favorites.map((venue) => {
@@ -27,15 +28,6 @@ export default async function CustomerFavoritesPage() {
 
           return (
             <Card key={venue.id} className="overflow-hidden group hover:shadow-md transition-shadow relative flex flex-col">
-              <form action={async () => {
-                'use server'
-                const supabaseServer = await createClient()
-                await supabaseServer.from('favorites').delete().eq('customer_id', user.id).eq('venue_id', venue.id)
-              }}>
-                <Button type="submit" variant="secondary" size="icon" className="absolute top-2 right-2 z-10 rounded-full bg-background/80 backdrop-blur hover:bg-background/90">
-                  <Heart className="w-5 h-5 fill-red-500 text-red-500" />
-                </Button>
-              </form>
               <Link href={`/venues/${venue.slug}`} className="flex-1 flex flex-col">
                 <div className="aspect-[4/3] bg-muted relative flex items-center justify-center">
                   <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors z-10" />
@@ -44,6 +36,11 @@ export default async function CustomerFavoritesPage() {
                   ) : (
                     <ImageIcon className="w-8 h-8 text-muted-foreground/30" />
                   )}
+                  <FavoriteButton 
+                    venueId={venue.id}
+                    initialIsFavorite={true}
+                    className="absolute top-2 right-2 w-8 h-8 bg-black/20 hover:bg-black/40 border border-white/20 text-white backdrop-blur-md"
+                  />
                 </div>
                 <CardContent className="p-4 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-2 gap-2">

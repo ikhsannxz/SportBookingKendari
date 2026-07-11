@@ -2,16 +2,18 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { ArrowLeft, MapPin, Calendar, Clock, CreditCard, FileText } from 'lucide-react'
+import { ArrowLeft, MapPin, Calendar, Clock, CreditCard, FileText, ExternalLink } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getCustomerBookingById } from '@/lib/supabase/queries/bookings'
 import { PaymentUploadForm } from '@/components/customer/payment-upload-form'
 import Image from 'next/image'
-import { getVenueImage } from '@/lib/utils'
+import { getVenueImage, getGoogleMapsUrl } from '@/lib/utils'
 import { expireUnpaidBookings } from '@/app/actions/bookings'
 import { DownloadInvoiceButton } from '@/components/customer/download-invoice-button'
+import { ReviewSection } from '@/components/customer/review-section'
+import { getCustomerReview } from '@/app/actions/reviews'
 
 export default async function CustomerBookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await expireUnpaidBookings()
@@ -28,6 +30,7 @@ export default async function CustomerBookingDetailPage({ params }: { params: Pr
   const primaryImage = getVenueImage((booking.venues as any).venue_images)
   const payment = booking.payments && booking.payments.length > 0 ? booking.payments[0] : null
   const ownerProfile = (booking.venues as any)?.profiles
+  const existingReview = await getCustomerReview(id)
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -76,10 +79,24 @@ export default async function CustomerBookingDetailPage({ params }: { params: Pr
               </div>
               <div>
                 <h3 className="font-bold text-xl mb-1">{(booking.venues as any).name}</h3>
-                <p className="text-muted-foreground flex items-center text-sm mb-2">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  {(booking.venues as any).address}, {(booking.venues as any).district}, {(booking.venues as any).city}
-                </p>
+                <div className="flex flex-col gap-1 mb-2">
+                  <p className="text-muted-foreground flex items-start text-sm">
+                    <MapPin className="w-4 h-4 mr-1 shrink-0 mt-0.5" />
+                    <span>{(booking.venues as any).address}, {(booking.venues as any).district}, {(booking.venues as any).city}</span>
+                  </p>
+                  {(() => {
+                    const mapsUrl = getGoogleMapsUrl(booking.venues as any)
+                    if (mapsUrl) {
+                      return (
+                        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs text-primary hover:underline font-medium ml-5">
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          Lihat Lokasi Venue
+                        </a>
+                      )
+                    }
+                    return null
+                  })()}
+                </div>
                 <Badge variant="outline" className="capitalize">{(booking.venues as any).sport_type}</Badge>
               </div>
             </CardContent>
@@ -124,6 +141,13 @@ export default async function CustomerBookingDetailPage({ params }: { params: Pr
               </CardContent>
             </Card>
           )}
+
+          <ReviewSection 
+            bookingId={booking.id}
+            venueId={booking.venue_id}
+            status={booking.status}
+            existingReview={existingReview}
+          />
 
         </div>
 

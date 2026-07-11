@@ -56,8 +56,8 @@ export async function PublicHeader() {
                     Cari Lapangan <ChevronRight className="w-4 h-4 text-slate-400" />
                   </Link>
 
-                  <Link href="/auth/register" className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold transition-colors">
-                    Untuk Mitra <ChevronRight className="w-4 h-4 text-slate-400" />
+                  <Link href="/activities" className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold transition-colors">
+                    Aktivitas <ChevronRight className="w-4 h-4 text-slate-400" />
                   </Link>
                   <Link href="/about" className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold transition-colors">
                     Tentang Kami <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -92,8 +92,8 @@ export async function PublicHeader() {
             Cari Lapangan
           </Link>
 
-          <Link href="/auth/register" className="text-[15px] font-semibold text-slate-600 hover:text-emerald-600 transition-colors">
-            Untuk Mitra
+          <Link href="/activities" className="text-[15px] font-semibold text-slate-600 hover:text-emerald-600 transition-colors">
+            Aktivitas
           </Link>
           <Link href="/about" className="text-[15px] font-semibold text-slate-600 hover:text-emerald-600 transition-colors">
             Tentang Kami

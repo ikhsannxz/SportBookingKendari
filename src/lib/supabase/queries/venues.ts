@@ -138,7 +138,10 @@ export async function getFeaturedVenues(limitCount: number = 6) {
     .limit(limitCount)
 
   if (error) {
-    console.error('Error fetching featured venues:', error)
+    console.error('Error code:', error?.code)
+    console.error('Error message:', error?.message)
+    console.error('Error details:', error?.details)
+    console.error('Full error:', JSON.stringify(error, null, 2))
     return []
   }
 

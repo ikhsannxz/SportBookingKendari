@@ -30,6 +30,15 @@ export async function createVenueAction(formData: FormData): Promise<VenueAction
   const district = formData.get('district') as string
   const latitude = formData.get('latitude') ? parseFloat(formData.get('latitude') as string) : null
   const longitude = formData.get('longitude') ? parseFloat(formData.get('longitude') as string) : null
+  const google_maps_url = formData.get('google_maps_url') as string | null
+
+  if (google_maps_url) {
+    const validDomains = ['maps.app.goo.gl', 'google.com/maps', 'maps.google.com', 'goo.gl/maps']
+    if (!validDomains.some(domain => google_maps_url.includes(domain))) {
+      return { error: 'Link Google Maps tidak valid. Gunakan format yang benar.' }
+    }
+  }
+
   let status = formData.get('status') as string || 'pending'
   // Enforce new venue status
   if (status !== 'draft' && status !== 'pending') {
@@ -65,6 +74,7 @@ export async function createVenueAction(formData: FormData): Promise<VenueAction
       district,
       latitude,
       longitude,
+      google_maps_url,
       status,
       maintenance_reason,
       maintenance_until,
@@ -172,6 +182,14 @@ export async function updateVenueAction(id: string, formData: FormData): Promise
   const district = formData.get('district') as string
   const latitude = formData.get('latitude') ? parseFloat(formData.get('latitude') as string) : null
   const longitude = formData.get('longitude') ? parseFloat(formData.get('longitude') as string) : null
+  const google_maps_url = formData.get('google_maps_url') as string | null
+
+  if (google_maps_url) {
+    const validDomains = ['maps.app.goo.gl', 'google.com/maps', 'maps.google.com', 'goo.gl/maps']
+    if (!validDomains.some(domain => google_maps_url.includes(domain))) {
+      return { error: 'Link Google Maps tidak valid. Gunakan format yang benar.' }
+    }
+  }
   
   const maintenance_reason = formData.get('maintenance_reason') ? formData.get('maintenance_reason') as string : null
   const maintenance_until = formData.get('maintenance_until') ? formData.get('maintenance_until') as string : null
@@ -224,6 +242,7 @@ export async function updateVenueAction(id: string, formData: FormData): Promise
       district,
       latitude,
       longitude,
+      google_maps_url,
       status,
       maintenance_reason: status === 'maintenance' ? maintenance_reason : null,
       maintenance_until: status === 'maintenance' ? maintenance_until : null,

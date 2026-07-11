@@ -63,11 +63,11 @@ function ResetPasswordForm() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="newPassword">Kata Sandi Baru</Label>
-            <Input id="newPassword" name="newPassword" type="password" required minLength={6} />
+            <Input id="newPassword" name="newPassword" type="password" placeholder="Masukkan kata sandi" required minLength={6} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi</Label>
-            <Input id="confirmPassword" name="confirmPassword" type="password" required minLength={6} />
+            <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="Masukkan ulang kata sandi" required minLength={6} />
           </div>
         </CardContent>
         <CardFooter>

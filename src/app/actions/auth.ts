@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { translateAuthError } from '@/lib/errors/auth-errors'
 
 export async function registerCustomerAction(
   prevState: AuthState,
@@ -12,6 +13,7 @@ export async function registerCustomerAction(
 export type AuthState = {
   error?: string
   success?: string
+  redirectUrl?: string
 } | null
 
 export async function loginAction(prevState: AuthState, formData: FormData): Promise<AuthState> {
@@ -30,7 +32,7 @@ export async function loginAction(prevState: AuthState, formData: FormData): Pro
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: translateAuthError(error) }
   }
 
   // Find user role to redirect correctly
@@ -72,7 +74,7 @@ export async function registerAction(
     console.log('SIGNUP RESULT:', { error, data })
 
     if (error) {
-      return { error: error.message }
+      return { error: translateAuthError(error) }
     }
 
     if (data.user && role === 'owner') {
@@ -85,12 +87,13 @@ export async function registerAction(
     }
 
     return {
-      success: 'Akun berhasil dibuat'
+      success: 'Akun berhasil dibuat',
+      redirectUrl: `/auth/verify-email?email=${encodeURIComponent(email)}`
     }
   } catch (err) {
     console.error('REGISTER ERROR:', err)
     return {
-      error: err instanceof Error ? err.message : 'Kesalahan tidak dikenal'
+      error: translateAuthError(err)
     }
   }
 }
@@ -118,7 +121,7 @@ export async function forgotPasswordAction(
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: translateAuthError(error) }
   }
 
   return { success: 'Tautan reset kata sandi telah dikirim ke email Anda' }
@@ -150,7 +153,7 @@ export async function resetPasswordAction(
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: translateAuthError(error) }
   }
 
   return { success: 'Kata sandi berhasil diperbarui' }

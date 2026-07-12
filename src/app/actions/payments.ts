@@ -48,7 +48,18 @@ export async function uploadPaymentProofAction(prevState: any, formData: FormDat
     // 1. Fetch the payment record to get its ID, or to see if we need to clean up old proof
     const { data: payment, error: paymentError } = await supabase
       .from('payments')
-      .select('id, proof_url, status')
+      .select(`
+        id, 
+        proof_url,
+        status,
+        bookings (
+          booking_code,
+          venues (
+            name,
+            owner_id
+          )
+        )
+      `)
       .eq('booking_id', bookingId)
       .single()
 
@@ -125,6 +136,22 @@ export async function uploadPaymentProofAction(prevState: any, formData: FormDat
       return { error: 'Failed to update payment record.' }
     }
 
+    const { createNotification } = await import('./notifications')
+    const customerName = user.user_metadata?.full_name || 'Pelanggan'
+    const bookingCode = (payment.bookings as any)?.booking_code || bookingId
+    const ownerId = (payment.bookings as any)?.venues?.owner_id
+    
+    if (ownerId) {
+      await createNotification({
+        userId: ownerId,
+        type: 'payment_uploaded',
+        title: 'Bukti Pembayaran Diupload',
+        message: `${customerName} mengunggah bukti pembayaran untuk ${bookingCode}`,
+        referenceId: payment.id, // Using payment ID since owner manages payments by payment ID
+        referenceType: 'payment'
+      })
+    }
+
     revalidatePath(`/customer/bookings/${bookingId}`)
     revalidatePath('/customer/dashboard')
     return { success: 'Payment proof uploaded successfully!' }
@@ -169,7 +196,7 @@ export async function verifyPaymentAction(paymentId: string) {
       .from('bookings')
       .update({ status: 'confirmed' })
       .eq('id', payment.booking_id)
-      .select('customer_id')
+      .select('customer_id, booking_code, venues(name)')
       .single()
 
     if (bookingError) {
@@ -178,13 +205,15 @@ export async function verifyPaymentAction(paymentId: string) {
 
     if (updatedBooking) {
       const { createNotification } = await import('./notifications')
+      const bookingCode = updatedBooking.booking_code;
+      const venueName = (updatedBooking.venues as any)?.name;
       await createNotification({
         userId: updatedBooking.customer_id,
         type: 'payment_verified',
         title: 'Pembayaran Diverifikasi',
-        message: 'Pembayaran Anda telah diverifikasi dan booking dikonfirmasi.',
-        referenceId: paymentId,
-        referenceType: 'payment'
+        message: `Pembayaran Anda untuk pesanan ${bookingCode} di ${venueName} telah diverifikasi.`,
+        referenceId: payment.booking_id, // Link to booking for customer
+        referenceType: 'booking' // Changed referenceType to booking so customer goes to /customer/bookings/[id]
       })
     }
 
@@ -242,7 +271,7 @@ export async function rejectPaymentAction(paymentId: string, reason: string) {
       .from('bookings')
       .update({ created_at: new Date().toISOString() })
       .eq('id', payment.booking_id)
-      .select('customer_id')
+      .select('customer_id, booking_code, venues(name)')
       .single()
 
     if (bookingUpdateError) {
@@ -252,13 +281,15 @@ export async function rejectPaymentAction(paymentId: string, reason: string) {
 
     if (updatedBooking) {
       const { createNotification } = await import('./notifications')
+      const bookingCode = updatedBooking.booking_code;
+      const venueName = (updatedBooking.venues as any)?.name;
       await createNotification({
         userId: updatedBooking.customer_id,
         type: 'payment_rejected',
         title: 'Pembayaran Ditolak',
-        message: `Bukti pembayaran Anda ditolak. Silakan upload ulang bukti pembayaran dalam 20 menit.\nAlasan: ${reason.trim()}`,
-        referenceId: paymentId,
-        referenceType: 'payment'
+        message: `Bukti pembayaran untuk pesanan ${bookingCode} di ${venueName} ditolak. Alasan: ${reason.trim()}`,
+        referenceId: payment.booking_id, // Link to booking for customer
+        referenceType: 'booking' // Changed referenceType to booking so customer goes to /customer/bookings/[id]
       })
     }
 

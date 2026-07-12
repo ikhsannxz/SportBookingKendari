@@ -5,6 +5,7 @@ import { useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -65,7 +66,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password-customer">Kata Sandi</Label>
-                  <Input id="password-customer" name="password" type="password" placeholder="Masukkan kata sandi" required minLength={6} />
+                  <PasswordInput id="password-customer" name="password" placeholder="Masukkan kata sandi" required minLength={6} />
                 </div>
                 <Button className="w-full" type="submit" disabled={isCustomerPending}>
                   {isCustomerPending ? 'Mendaftarkan Akun...' : 'Buat Akun'}
@@ -95,7 +96,7 @@ export default function RegisterPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password-owner">Kata Sandi</Label>
-                  <Input id="password-owner" name="password" type="password" placeholder="Masukkan kata sandi" required minLength={6} />
+                  <PasswordInput id="password-owner" name="password" placeholder="Masukkan kata sandi" required minLength={6} />
                 </div>
                 <Button className="w-full" type="submit" disabled={isOwnerPending}>
                   {isOwnerPending ? 'Mendaftarkan Akun Pemilik...' : 'Buat Akun Pemilik'}

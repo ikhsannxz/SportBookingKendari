@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { updateBookingStatusAction } from '@/app/actions/bookings'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import {
   Table,
   TableBody,
@@ -39,6 +40,8 @@ interface BookingTableProps {
 
 export function BookingTable({ bookings, showActions = true }: BookingTableProps) {
   const [isPending, startTransition] = useTransition()
+  const searchParams = useSearchParams()
+  const highlightedBooking = searchParams.get('booking')
 
   const handleUpdateStatus = (bookingId: string, newStatus: 'confirmed' | 'rejected' | 'completed') => {
     startTransition(async () => {
@@ -92,8 +95,9 @@ export function BookingTable({ bookings, showActions = true }: BookingTableProps
         <TableBody>
           {bookings.map((booking: BookingData) => {
             const paymentStatus = booking.payments?.[0]?.status
+            const isHighlighted = highlightedBooking === booking.id || highlightedBooking === booking.booking_code
             return (
-            <TableRow key={booking.id}>
+            <TableRow key={booking.id} className={isHighlighted ? 'bg-primary/5 transition-colors' : ''}>
               <TableCell className="font-medium text-xs">{booking.booking_code}</TableCell>
               <TableCell>{booking.profiles?.full_name || 'Unknown'}</TableCell>
               <TableCell>{booking.venues?.name}</TableCell>

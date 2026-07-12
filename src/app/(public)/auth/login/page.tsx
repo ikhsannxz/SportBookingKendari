@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useActionState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { loginAction } from '@/app/actions/auth'
@@ -38,7 +39,7 @@ export default function LoginPage() {
                   Lupa Kata Sandi?
                 </Link>
               </div>
-              <Input id="password" name="password" type="password" placeholder="Masukkan kata sandi" required />
+              <PasswordInput id="password" name="password" placeholder="Masukkan kata sandi" required />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">

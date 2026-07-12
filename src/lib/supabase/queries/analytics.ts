@@ -91,11 +91,11 @@ export async function getOwnerAnalytics() {
   const bookingIds = bookings?.map(b => b.id) || []
   
   // 3. Get payments for these bookings
-  let payments: { amount: number | string; status: string; verified_at: string | null }[] = []
+  let payments: { amount: number | string; status: string; verified_at: string | null; booking_id: string }[] = []
   if (bookingIds.length > 0) {
     const { data: paymentsData } = await supabase
       .from('payments')
-      .select('amount, status, verified_at')
+      .select('amount, status, verified_at, booking_id')
       .in('booking_id', bookingIds)
       
     payments = paymentsData || []
@@ -128,7 +128,10 @@ export async function getOwnerAnalytics() {
         }
       }
     } else if (payment.status === 'pending') {
-      pendingPayments++
+      const booking = bookings?.find(b => b.id === payment.booking_id);
+      if (booking && ['pending', 'confirmed'].includes(booking.status)) {
+        pendingPayments++
+      }
     }
   })
 

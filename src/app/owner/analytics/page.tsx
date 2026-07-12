@@ -10,7 +10,11 @@ export default async function OwnerAnalyticsPage() {
   const payments = await getOwnerPayments()
   const chartData = await getOwnerChartData()
 
-  const pendingPayments = payments.filter((p: any) => p.status === 'pending').length
+  const pendingPayments = payments.filter((p: any) => 
+    p.status === 'pending' && 
+    p.bookings && 
+    ['pending', 'confirmed'].includes(p.bookings.status)
+  ).length
   const verifiedPayments = payments.filter((p: any) => p.status === 'verified').length
 
   const today = new Date().toISOString().split('T')[0]

@@ -34,13 +34,20 @@ export async function addFavoriteAction(venueId: string) {
       throw error
     }
 
-    await supabase.from('notifications').insert({
-      user_id: user.id,
+    const { data: venue } = await supabase
+      .from('venues')
+      .select('name')
+      .eq('id', venueId)
+      .single()
+
+    const { createNotification } = await import('./notifications')
+    await createNotification({
+      userId: user.id,
       type: 'system',
       title: 'Venue Ditambahkan ke Favorit',
-      message: 'Venue berhasil ditambahkan ke daftar favorit Anda.',
-      reference_id: venueId,
-      reference_type: 'venue'
+      message: `${venue?.name || 'Venue'} berhasil ditambahkan ke daftar favorit Anda.`,
+      referenceId: venueId,
+      referenceType: 'venue'
     })
 
     revalidatePath('/customer/favorites')
@@ -72,13 +79,20 @@ export async function removeFavoriteAction(venueId: string) {
 
     if (error) throw error
 
-    await supabase.from('notifications').insert({
-      user_id: user.id,
+    const { data: venue } = await supabase
+      .from('venues')
+      .select('name')
+      .eq('id', venueId)
+      .single()
+
+    const { createNotification } = await import('./notifications')
+    await createNotification({
+      userId: user.id,
       type: 'system',
       title: 'Venue Dihapus dari Favorit',
-      message: 'Venue berhasil dihapus dari daftar favorit Anda.',
-      reference_id: venueId,
-      reference_type: 'venue'
+      message: `${venue?.name || 'Venue'} berhasil dihapus dari daftar favorit Anda.`,
+      referenceId: venueId,
+      referenceType: 'venue'
     })
 
     revalidatePath('/customer/favorites')

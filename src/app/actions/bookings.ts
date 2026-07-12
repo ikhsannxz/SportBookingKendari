@@ -64,7 +64,7 @@ export async function createBookingAction(formData: FormData): Promise<BookingAc
   // 1. Fetch Venue details to get price_per_hour
   const { data: venue, error: venueError } = await supabase
     .from('venues')
-    .select('price_per_hour, owner_id')
+    .select('price_per_hour, owner_id, name')
     .eq('id', venueId)
     .single()
 
@@ -115,7 +115,7 @@ export async function createBookingAction(formData: FormData): Promise<BookingAc
   const totalPrice = calculateBookingPrice(venue.price_per_hour, durationHours)
 
   // 5. Insert Booking Atomically via RPC
-  const { error: insertError } = await supabase
+  const { data: newBookingId, error: insertError } = await supabase
     .rpc('create_booking_atomic', {
       p_customer_id: user.id,
       p_venue_id: venueId,
@@ -140,12 +140,13 @@ export async function createBookingAction(formData: FormData): Promise<BookingAc
 
   // Create notification for the venue owner
   const { createNotification } = await import('./notifications')
+  const customerName = user.user_metadata?.full_name || 'Pelanggan'
   await createNotification({
     userId: venue.owner_id,
     type: 'booking_created',
     title: 'Booking Baru',
-    message: `Ada booking baru untuk ${venueId} pada tanggal ${bookingDate}`,
-    referenceId: venueId,
+    message: `${customerName} melakukan booking ${venue.name}`,
+    referenceId: newBookingId,
     referenceType: 'booking'
   })
 
@@ -186,6 +187,12 @@ export async function cancelBookingAction(bookingId: string): Promise<BookingAct
   if (error) {
     return { error: error.message }
   }
+
+  // Also update payment status to rejected
+  await supabase
+    .from('payments')
+    .update({ status: 'rejected' })
+    .eq('booking_id', bookingId)
 
   revalidatePath('/customer/bookings')
   revalidatePath('/customer/dashboard')
@@ -239,20 +246,39 @@ export async function updateBookingStatusAction(
     return { error: error.message }
   }
 
+  // Sync payment status
+  let paymentStatusUpdate = null;
+  if (dbStatus === 'completed') {
+    paymentStatusUpdate = 'verified';
+  } else if (dbStatus === 'cancelled') {
+    paymentStatusUpdate = 'rejected';
+  }
+
+  if (paymentStatusUpdate) {
+    await supabase
+      .from('payments')
+      .update({ status: paymentStatusUpdate })
+      .eq('booking_id', bookingId)
+  }
+
   // Create notification for the customer
   const { data: updatedBooking } = await supabase
     .from('bookings')
-    .select('customer_id, venues(name)')
+    .select('customer_id, booking_code, venues(name)')
     .eq('id', bookingId)
     .single()
 
   if (updatedBooking) {
     const { createNotification } = await import('./notifications')
+    const venueName = (updatedBooking.venues as any).name;
+    const bookingCode = updatedBooking.booking_code;
+    const statusText = dbStatus === 'completed' ? 'Selesai' : dbStatus === 'cancelled' ? 'Dibatalkan' : dbStatus === 'confirmed' ? 'Dikonfirmasi' : dbStatus;
+    
     await createNotification({
       userId: updatedBooking.customer_id,
       type: `booking_${dbStatus}` as 'booking_confirmed' | 'booking_cancelled' | 'booking_completed',
-      title: 'Status Booking Diperbarui',
-      message: `Booking Anda di ${(updatedBooking.venues as any).name} telah diubah menjadi ${dbStatus}`,
+      title: `Booking ${statusText}`,
+      message: `Status pesanan Anda (${bookingCode}) di ${venueName} telah diubah menjadi ${statusText}.`,
       referenceId: bookingId,
       referenceType: 'booking'
     })

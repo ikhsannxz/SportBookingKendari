@@ -12,7 +12,9 @@ import { getVenueImage, translateFacility, getGoogleMapsUrl } from '@/lib/utils'
 import { getFavoritesAction } from '@/app/actions/favorites'
 import { FavoriteButton } from '@/components/customer/favorite-button'
 import { ReviewList } from '@/components/public/review-list'
+import { ReviewSummary } from '@/components/public/review-summary'
 import { getVenueReviews } from '@/app/actions/reviews'
+import Link from 'next/link'
 
 export default async function VenueDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -195,7 +197,19 @@ export default async function VenueDetailPage({ params }: { params: Promise<{ sl
 
           <section>
             <h2 className="text-2xl font-bold mb-4">Ulasan Pelanggan</h2>
-            <ReviewList reviews={reviews} />
+            <div className="space-y-6">
+              <ReviewSummary reviews={reviews} />
+              <ReviewList reviews={reviews.slice(0, 3)} />
+              {reviews.length > 3 && (
+                <div className="flex justify-center pt-2">
+                  <Button variant="outline" asChild className="w-full sm:w-auto">
+                    <Link href={`/venues/${venue.slug}/reviews`}>
+                      Lihat Semua Ulasan
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
           </section>
         </div>
 

@@ -147,12 +147,15 @@ export async function getOwnerBookingById(id: string) {
 
   if (!user) return null
 
+  console.log(`[DEBUG] getOwnerBookingById called for booking_id: ${id}, user_id (owner): ${user.id}`)
+
   const { data, error } = await supabase
     .from('bookings')
     .select('*, venues!inner(*, venue_images(*)), profiles(*), payments(*)')
     .eq('id', id)
-    .eq('venues.owner_id', user.id)
-    .single()
+    .maybeSingle()
+
+  console.log(`[DEBUG] Query Result for ${id}:`, { data, error })
 
   if (error) {
     console.error('Error fetching owner booking by id:', error)

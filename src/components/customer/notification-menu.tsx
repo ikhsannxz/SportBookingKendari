@@ -1,11 +1,12 @@
 'use client'
 
-import { Bell } from 'lucide-react'
+import { Bell, CalendarCheck, CalendarX, CheckCircle, CreditCard, MessageSquare, Star, Info, ChevronRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatDistanceToNow } from 'date-fns'
 import { id as localeId } from 'date-fns/locale'
+import { useRouter } from 'next/navigation'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +17,9 @@ import {
 export function NotificationMenu() {
   const [notifications, setNotifications] = useState<any[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
   const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -98,8 +101,68 @@ export function NotificationMenu() {
     }
   }
 
+  const markAllAsRead = async () => {
+    if (unreadCount === 0) return
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { error } = await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false)
+      
+    if (!error) {
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+      setUnreadCount(0)
+    }
+  }
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'booking_created': return <CalendarCheck className="h-4 w-4 text-blue-500" />
+      case 'booking_confirmed': return <CheckCircle className="h-4 w-4 text-green-500" />
+      case 'booking_cancelled': return <CalendarX className="h-4 w-4 text-red-500" />
+      case 'booking_completed': return <CheckCircle className="h-4 w-4 text-indigo-500" />
+      case 'payment_uploaded': return <CreditCard className="h-4 w-4 text-blue-500" />
+      case 'payment_verified': return <CheckCircle className="h-4 w-4 text-green-500" />
+      case 'payment_rejected': return <CalendarX className="h-4 w-4 text-red-500" />
+      case 'review_received': return <Star className="h-4 w-4 text-yellow-500" />
+      default: return <Info className="h-4 w-4 text-muted-foreground" />
+    }
+  }
+
+  const getActionUrl = (notification: any) => {
+    switch (notification.type) {
+      case 'booking_created': 
+      case 'payment_uploaded': 
+        return `/owner/bookings?booking=${notification.reference_id}`
+      case 'payment_verified': 
+      case 'payment_rejected': 
+      case 'booking_confirmed': 
+      case 'booking_cancelled': 
+        return `/customer/bookings`
+      case 'booking_completed': 
+        return `/activities`
+      case 'review_received': 
+        return `/owner/reviews`
+      case 'system':
+        return notification.reference_type === 'venue' ? `/venues/${notification.reference_id}` : '#'
+      default:
+        return '#'
+    }
+  }
+
+  const handleNotificationClick = (n: any) => {
+    if (!n.is_read) markAsRead(n.id)
+    setIsOpen(false)
+    const url = getActionUrl(n)
+    if (url !== '#') {
+      router.push(url)
+    }
+  }
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" size="icon" className="relative h-9 w-9">
@@ -114,44 +177,61 @@ export function NotificationMenu() {
           </Button>
         }
       />
-      <DropdownMenuContent align="end" className="w-80">
-        <div className="flex items-center justify-between px-3 py-2 text-sm font-semibold">
-          <span>Notifikasi</span>
+      <DropdownMenuContent align="end" className="w-80 md:w-96 p-0 border shadow-lg">
+        <div className="flex items-center justify-between px-4 py-3 bg-muted/30 border-b">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-sm">Notifikasi</h3>
+            {unreadCount > 0 && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                {unreadCount}
+              </span>
+            )}
+          </div>
           {unreadCount > 0 && (
-            <span className="text-xs font-normal text-muted-foreground">
-              {unreadCount} belum dibaca
-            </span>
+            <Button variant="ghost" size="sm" onClick={markAllAsRead} className="h-auto p-0 text-xs text-primary hover:text-primary/80 bg-transparent">
+              <Check className="h-3.5 w-3.5 mr-1" />
+              Tandai dibaca
+            </Button>
           )}
         </div>
-        <DropdownMenuSeparator />
         <div className="max-h-[400px] overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-              <Bell className="h-8 w-8 text-muted-foreground/30 mb-2" />
-              <p className="text-sm font-medium text-muted-foreground">Belum Ada Notifikasi</p>
-              <p className="text-xs text-muted-foreground/70 mt-0.5">
-                Semua notifikasi telah dibaca.
+            <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-3">
+                <Bell className="h-6 w-6 text-muted-foreground/50" />
+              </div>
+              <p className="text-sm font-medium">Belum Ada Notifikasi</p>
+              <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+                Semua notifikasi telah dibaca. Kami akan memberi tahu Anda jika ada pembaruan.
               </p>
             </div>
           ) : (
-            notifications.map((n) => (
-              <div 
-                key={n.id} 
-                className={`px-3 py-3 hover:bg-muted/50 cursor-pointer border-b last:border-0 ${!n.is_read ? 'bg-primary/5' : ''}`}
-                onClick={() => {
-                  if (!n.is_read) markAsRead(n.id)
-                }}
-              >
-                <div className="flex justify-between items-start">
-                  <p className={`text-sm ${!n.is_read ? 'font-semibold' : 'font-medium'}`}>{n.title}</p>
-                  {!n.is_read && <span className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1" />}
+            <div className="flex flex-col">
+              {notifications.map((n) => (
+                <div 
+                  key={n.id} 
+                  className={`flex gap-3 px-4 py-3 hover:bg-muted/50 cursor-pointer border-b last:border-0 transition-colors ${!n.is_read ? 'bg-primary/5' : ''}`}
+                  onClick={() => handleNotificationClick(n)}
+                >
+                  <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border bg-background ${!n.is_read ? 'border-primary/20 shadow-sm' : 'border-border'}`}>
+                    {getNotificationIcon(n.type)}
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className={`text-sm ${!n.is_read ? 'font-semibold text-foreground' : 'font-medium text-foreground/90'}`}>
+                        {n.title}
+                      </p>
+                      <span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap pt-0.5">
+                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: localeId })}
+                      </span>
+                    </div>
+                    <p className={`text-xs leading-relaxed line-clamp-2 ${!n.is_read ? 'text-foreground/80' : 'text-muted-foreground'}`}>
+                      {n.message}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{n.message}</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1.5 font-medium">
-                  {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: localeId })}
-                </p>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </DropdownMenuContent>

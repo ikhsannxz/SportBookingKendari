@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { Search, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -54,7 +55,9 @@ export default async function OwnerBookingsPage({
         </div>
       </div>
 
-      <BookingTable bookings={bookings} />
+      <Suspense fallback={<div className="p-8 text-center border rounded-xl"><p className="text-muted-foreground">Memuat tabel...</p></div>}>
+        <BookingTable bookings={bookings} />
+      </Suspense>
 
       <div className="flex items-center justify-between pt-4">
         <p className="text-sm text-muted-foreground">

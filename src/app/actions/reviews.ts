@@ -28,7 +28,7 @@ export async function createReviewAction(formData: FormData): Promise<ReviewActi
   // Check eligibility
   const { data: booking, error: bookingError } = await supabase
     .from('bookings')
-    .select('status, customer_id, venues(owner_id, slug)')
+    .select('status, customer_id, booking_code, venues(owner_id, slug, name)')
     .eq('id', bookingId)
     .single()
 
@@ -66,12 +66,16 @@ export async function createReviewAction(formData: FormData): Promise<ReviewActi
   // Owner notification
   const ownerId = (booking.venues as any).owner_id
   if (ownerId) {
-    await supabase.from('notifications').insert({
-      profile_id: ownerId,
-      title: 'Ulasan Baru Diterima',
-      message: `Anda menerima ulasan bintang ${rating} untuk booking.`,
+    const { createNotification } = await import('./notifications')
+    const venueName = (booking.venues as any).name
+    const customerName = user.user_metadata?.full_name || 'Pelanggan'
+    await createNotification({
+      userId: ownerId,
       type: 'review_received',
-      link_url: `/owner/dashboard`,
+      title: 'Ulasan Baru Diterima',
+      message: `${customerName} memberikan ulasan ${rating} bintang untuk ${venueName}`,
+      referenceId: venueId, // Link to venue so owner goes to reviews
+      referenceType: 'venue'
     })
   }
 

@@ -11,7 +11,7 @@ export async function getOwnerPayments() {
     .select(`
       *,
       bookings!inner(
-        booking_code, booking_date, start_time, end_time, duration_hours, customer_id,
+        booking_code, booking_date, start_time, end_time, duration_hours, customer_id, status,
         venues!inner(name, owner_id),
         profiles!inner(full_name)
       )
@@ -38,7 +38,7 @@ export async function getOwnerPaymentById(id: string) {
     .select(`
       *,
       bookings!inner(
-        booking_code, booking_date, start_time, end_time, duration_hours, customer_id, total_price,
+        booking_code, booking_date, start_time, end_time, duration_hours, customer_id, total_price, status,
         venues!inner(name, district, city, owner_id),
         profiles!inner(full_name, email, phone, avatar_url)
       )

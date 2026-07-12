@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { resetPasswordAction } from '@/app/actions/auth'
@@ -63,11 +64,11 @@ function ResetPasswordForm() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="newPassword">Kata Sandi Baru</Label>
-            <Input id="newPassword" name="newPassword" type="password" placeholder="Masukkan kata sandi" required minLength={6} />
+            <PasswordInput id="newPassword" name="newPassword" placeholder="Masukkan kata sandi" required minLength={6} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi</Label>
-            <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="Masukkan ulang kata sandi" required minLength={6} />
+            <PasswordInput id="confirmPassword" name="confirmPassword" placeholder="Masukkan ulang kata sandi" required minLength={6} />
           </div>
         </CardContent>
         <CardFooter>

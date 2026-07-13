@@ -18,13 +18,13 @@ export function PublicFooter() {
               Platform booking lapangan olahraga terpercaya di Kendari. Temukan, pesan, dan mainkan olahraga favoritmu dengan pengalaman terbaik.
             </p>
             <div className="flex gap-3">
-              <Link href="#" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all text-slate-500">
+              <Link href="#" aria-label="Instagram" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all text-slate-500">
                 <FaInstagram className="w-5 h-5" />
               </Link>
-              <Link href="#" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all text-slate-500">
+              <Link href="#" aria-label="Facebook" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all text-slate-500">
                 <FaFacebook className="w-5 h-5" />
               </Link>
-              <Link href="#" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all text-slate-500">
+              <Link href="#" aria-label="X (Twitter)" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all text-slate-500">
                 <FaXTwitter className="w-5 h-5" />
               </Link>
             </div>

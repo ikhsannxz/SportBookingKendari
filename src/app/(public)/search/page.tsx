@@ -92,7 +92,7 @@ export default async function SearchPage({
           </div>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {venues.map((venue) => {
+            {venues.map((venue, index) => {
               const primaryImage = getVenueImage(venue.venue_images)
 
               return (

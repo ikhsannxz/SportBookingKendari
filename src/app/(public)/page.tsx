@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 import Link from 'next/link'
-import { Search, MapPin, Star, ShieldCheck, Clock, CreditCard, ChevronRight, CheckCircle2, QrCode, Zap, CheckCircle } from 'lucide-react'
+import { Search, MapPin, Star, ShieldCheck, Clock, CreditCard, ChevronRight, QrCode, Zap, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
@@ -60,7 +60,7 @@ export default async function LandingPage() {
                     className="border-0 bg-transparent focus-visible:ring-0 px-0 shadow-none text-base text-slate-900 placeholder:text-slate-400 h-full w-full outline-none"
                   />
                 </div>
-                <Button type="submit" size="lg" className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white h-auto py-4 sm:py-0 px-8 text-base font-bold shadow-md transition-all">
+                <Button type="submit" size="lg" className="rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white h-auto py-4 sm:py-0 px-8 text-base font-bold shadow-md transition-all">
                   Cari Sekarang
                 </Button>
               </form>
@@ -107,6 +107,7 @@ export default async function LandingPage() {
       {/* 2. Platform Benefits */}
       <section className="py-16 border-y border-slate-100 bg-white">
         <div className="container px-4 md:px-8 mx-auto">
+          <h2 className="sr-only">Keunggulan Platform</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="flex flex-col items-center md:items-start text-center md:text-left gap-3">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -190,7 +191,7 @@ export default async function LandingPage() {
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-            {featuredVenues.map((venue) => {
+            {featuredVenues.map((venue, index) => {
               const primaryImage = getVenueImage(venue.venue_images)
 
               return (
@@ -293,53 +294,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* 6. Call To Action untuk Mitra (Sleek Startup Design) */}
-      <section className="py-24 bg-white border-t border-slate-100">
-        <div className="container px-4 md:px-8 mx-auto">
-          <div className="bg-slate-950 rounded-[2.5rem] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-12 overflow-hidden relative">
-            {/* Minimalist Decoration */}
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
-            
-            <div className="max-w-2xl text-white relative z-10">
-              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Kembangkan Bisnis Venue Anda Bersama Kami</h2>
-              <p className="text-lg text-slate-400 mb-10 font-medium leading-relaxed">
-                Tingkatkan okupansi lapangan dan kelola operasional dengan lebih efisien menggunakan dashboard manajemen dari SportBook.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 h-14 text-base transition-colors" asChild>
-                  <Link href="/auth/register">Daftar Menjadi Mitra</Link>
-                </Button>
-                <Button size="lg" variant="outline" className="rounded-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white font-bold px-8 h-14 text-base transition-colors" asChild>
-                  <Link href="/panduan-mitra">Pelajari Fitur Mitra</Link>
-                </Button>
-              </div>
-            </div>
-            
-            <div className="hidden lg:block relative z-10 w-full max-w-sm">
-              <div className="aspect-square bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl p-6 flex flex-col gap-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white">Booking Baru</div>
-                    <div className="text-xs text-slate-400">Baru saja</div>
-                  </div>
-                </div>
-                <div className="h-2 bg-slate-800 rounded-full w-full"></div>
-                <div className="h-2 bg-slate-800 rounded-full w-3/4"></div>
-                <div className="h-2 bg-slate-800 rounded-full w-5/6"></div>
-                <div className="mt-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                  <div className="text-2xl font-bold text-emerald-400 mb-1">+Rp 450.000</div>
-                  <div className="text-xs font-medium text-emerald-500/80">Pendapatan hari ini</div>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </section>
+
       
     </div>
   )

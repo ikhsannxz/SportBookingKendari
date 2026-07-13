@@ -68,7 +68,7 @@ export async function PublicHeader() {
                     <Button variant="outline" className="w-full justify-center rounded-xl h-12 text-base font-bold border-slate-200 text-slate-700 hover:bg-slate-50" asChild>
                       <Link href="/auth/login">Masuk</Link>
                     </Button>
-                    <Button className="w-full justify-center rounded-xl h-12 text-base font-bold bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
+                    <Button className="w-full justify-center rounded-xl h-12 text-base font-bold bg-emerald-700 hover:bg-emerald-800 text-white" asChild>
                       <Link href="/auth/register">Daftar</Link>
                     </Button>
                   </div>
@@ -108,7 +108,7 @@ export async function PublicHeader() {
                 <Button variant="ghost" className="rounded-full font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100" asChild>
                   <Link href="/auth/login">Masuk</Link>
                 </Button>
-                <Button className="rounded-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm" asChild>
+                <Button className="rounded-full font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm" asChild>
                   <Link href="/auth/register">Daftar</Link>
                 </Button>
               </div>

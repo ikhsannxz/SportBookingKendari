@@ -28,7 +28,7 @@ export function FavoriteButton({ venueId, initialIsFavorite, variant = 'icon', c
     startTransition(async () => {
       const result = await toggleFavoriteAction(venueId)
 
-      if (result.needsLogin) {
+      if ('needsLogin' in result && result.needsLogin) {
         // Revert optimistic update
         setIsFavorite(previousState)
         toast.error(result.error)
@@ -36,16 +36,16 @@ export function FavoriteButton({ venueId, initialIsFavorite, variant = 'icon', c
         return
       }
 
-      if (result.error) {
+      if ('error' in result && result.error) {
         // Revert optimistic update
         setIsFavorite(previousState)
         toast.error(result.error)
         return
       }
 
-      if (result.success) {
+      if ('success' in result && result.success) {
         // Use the actual state from the server to be sure, though optimistic is likely correct
-        if (result.isFavorite !== undefined) {
+        if ('isFavorite' in result && result.isFavorite !== undefined) {
           setIsFavorite(result.isFavorite)
         }
         toast.success(result.success)
@@ -83,6 +83,7 @@ export function FavoriteButton({ venueId, initialIsFavorite, variant = 'icon', c
         "absolute top-2 right-2 z-10 rounded-full bg-background/80 backdrop-blur hover:bg-background/90 transition-all",
         className
       )}
+      aria-label={isFavorite ? 'Hapus dari Favorit' : 'Simpan ke Favorit'}
     >
       <Heart className={cn("w-5 h-5 transition-colors", isFavorite ? "fill-red-500 text-red-500" : "")} />
     </Button>

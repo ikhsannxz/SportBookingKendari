@@ -26,7 +26,6 @@ function Breadcrumbs() {
     schedules: 'Jadwal',
     analytics: 'Analitik',
     profile: 'Profil',
-    settings: 'Pengaturan',
   }
   
   const title = sectionTitleMap[currentSection] ?? (currentSection.charAt(0).toUpperCase() + currentSection.slice(1))

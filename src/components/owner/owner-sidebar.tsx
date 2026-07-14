@@ -8,7 +8,6 @@ import {
   Clock,
   BarChart3,
   User,
-  Settings,
   Store,
   Star
 } from 'lucide-react'
@@ -25,7 +24,6 @@ const ownerNavItems = [
 
 const accountItems = [
   { href: '/owner/profile', label: 'Profil', icon: User },
-  { href: '/owner/settings', label: 'Pengaturan', icon: Settings },
 ]
 
 export function OwnerSidebar({ className }: { className?: string }) {
